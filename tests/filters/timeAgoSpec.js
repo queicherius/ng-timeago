@@ -1,6 +1,6 @@
 describe("filters/timeAgo", function () {
 
-    beforeEach(angular.mock.module('newsletter-mailer'));
+    beforeEach(angular.mock.module('app'));
 
     it('should have a timeAgo filter', inject(function ($filter) {
 
