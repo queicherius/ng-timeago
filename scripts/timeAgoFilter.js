@@ -6,7 +6,7 @@ application.filter('timeAgo', function () {
 
         var ago, difference, seconds, localstuff, timeArray, i;
 
-        if (time === undefined || time === null) {
+        if (time === undefined || time === null || accuracy < 1) {
             return null;
         }
 
