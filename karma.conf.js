@@ -14,9 +14,11 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'public/scripts/app.min.js',
-      'karma/angular-mocks.js',
-      'karma/**/*Spec.js'
+      'vendor/*.js',
+      'scripts/app.js',
+      'scripts/timeAgoFilter.js',
+      'tests/angular-mocks.js',
+      'tests/**/*Spec.js'
     ],
 
 
