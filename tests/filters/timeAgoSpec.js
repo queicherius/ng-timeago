@@ -34,10 +34,11 @@ describe("Unit-Tests: timeAgo filter", function () {
     
     it('should work with the current time if "now" is not set', function () {
 
-        var timeAgo;
+        var timeAgo, timeAgoWithCurrentSeconds, timestamp = (new Date()).getTime();
         
-        timeAgo = timeAgoFilter(0);
-        expect(timeAgo).not.toEqual(null);
+        timeAgo = timeAgoFilter(timestamp, 99);
+        timeAgoWithCurrentSeconds = timeAgoFilter(timestamp, 99, timestamp);
+        expect(timeAgo).toEqual(timeAgoWithCurrentSeconds);
 
     });
     
@@ -199,20 +200,18 @@ describe("Unit-Tests: timeAgo filter", function () {
     it('should return "x year(s) ago" / "in x year(s) if the difference in the years', function () {
 
         var timeAgo;
-        
-        // TODO: INTEGERS?!??!?
 
         timeAgo = timeAgoFilter(0, 99, year);
-        // expect(timeAgo).toEqual('1 year ago');
+        expect(timeAgo).toEqual('1 year ago');
 
         timeAgo = timeAgoFilter(0, 99, 2 * year);
-        // expect(timeAgo).toEqual('2 years ago');
+        expect(timeAgo).toEqual('2 years ago');
 
         timeAgo = timeAgoFilter(year, 99, 0);
-        // expect(timeAgo).toEqual('in 1 year');
+        expect(timeAgo).toEqual('in 1 year');
 
         timeAgo = timeAgoFilter(2 * year, 99, 0);
-        // expect(timeAgo).toEqual('in 2 years');
+        expect(timeAgo).toEqual('in 2 years');
 
     });
 
@@ -260,13 +259,11 @@ describe("Unit-Tests: timeAgo filter", function () {
         var timeAgo;
         
         timeAgo = timeAgoFilter(0, 3, week + /* null days, null hours + */ 10 * second);
-        // expect(timeAgo).toEqual('1 week ago');
+        expect(timeAgo).toEqual('1 week ago');
         
         timeAgo = timeAgoFilter(0, 2, month + /* null weeks + */ 6 * day + 4 * hour + 10 * second);
-        // expect(timeAgo).toEqual('1 month ago');
+        expect(timeAgo).toEqual('1 month ago');
 
     });
-
-    // TODO tests for actual functionality (take month days etc)
 
 });

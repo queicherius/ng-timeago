@@ -1,94 +1,148 @@
-/*global application:false, console:false*/
+/*jslint plusplus: true */
+/*global application:false*/
 application.filter('timeAgo', function () {
     'use strict';
 
-    return function (time, accuracy, now) {
+    return function (time_ago, accuracy, time_now) {
 
-        var ago, difference, seconds, localstuff, timeArray, i;
+        var timeAgo = {
 
-        if (time === undefined || time === null || accuracy < 1) {
-            return null;
-        }
+            execute: function (time_ago, accuracy, time_now) {
 
-        if (accuracy === undefined || accuracy === null) {
-            accuracy = 1;
-        }
+                var difference, grouped_difference;
 
-        if (now === undefined || now === null) {
-            now = new Date();
-        } else {
-            now = new Date(now);
-        }
+                // Validation
+                if (time_ago === undefined || time_ago === null) {
+                    return null;
+                }
+                
+                if (accuracy < 1) {
+                    return null;
+                }
 
-        ago = new Date(time);
-        difference = Math.abs(Math.round((now - ago) / 1000));
+                // Default values
+                time_ago = new Date(time_ago);
+                
+                if (accuracy === undefined || accuracy === null) {
+                    accuracy = 1;
+                }
+                
+                if (time_now === undefined || time_now === null) {
+                    time_now = new Date();
+                } else {
+                    time_now = new Date(time_now);
+                }
+                
+                // Calculation
+                difference = this.calculateDifference(time_now, time_ago);
 
-        if (difference === 0) {
-            return 'just now';
-        }
+                if (difference === 0) {
+                    return 'just now';
+                }
 
-        function format(quantity, called) { // TODO rename called
+                grouped_difference = this.groupDifference(difference);
+                grouped_difference = this.applyAccuracy(grouped_difference, accuracy);
 
-            if (quantity < 1) {
-                return null;
+                return this.toString(grouped_difference, (time_ago > time_now));
+
+            },
+            calculateDifference: function (now, ago) {
+                
+                return Math.abs(Math.round((now - ago) / 1000));
+                
+            },
+            groupDifference: function (difference) {
+
+                var grouped_difference = [],
+                    second_groups = {
+                        year: 365 * 24 * 60 * 60,
+                        month: 31 * 24 * 60 * 60,
+                        week: 7 * 24 * 60 * 60,
+                        day: 24 * 60 * 60,
+                        hour: 60 * 60,
+                        minute: 60,
+                        second: 1
+                    },
+                    group,
+                    group_seconds,
+                    group_count,
+                    group_string;
+
+                // Iterate through and build an array of preformatted strings
+                for (group in second_groups) {
+
+                    group_seconds = second_groups[group];
+                    group_count = Math.floor(difference / group_seconds);
+                    group_string = this.formatGroup(group_count, group);
+
+                    // Add the null values after the first group
+                    // so that the accuracy is for all groups, and not only the
+                    // groups with a value
+                    if (group_string !== null || grouped_difference.length > 0) {
+                        grouped_difference.push(group_string);
+                    }
+
+                    difference -= group_count * group_seconds;
+
+                }
+
+                return grouped_difference;
+
+            },
+            formatGroup: function (quantity, group_name) {
+
+                if (quantity < 1) {
+                    return null;
+                }
+
+                var plural = (quantity > 1) ? 's' : '';
+                return quantity + ' ' + group_name + plural;
+
+            },
+            applyAccuracy: function (grouped_difference, accuracy) {
+
+                grouped_difference.length = Math.min(grouped_difference.length, accuracy);
+                return grouped_difference;
+
+            },
+            toString: function (grouped_difference, in_future) {
+
+                var string;
+                
+                grouped_difference = this.removeNullValues(grouped_difference);
+                string = this.joinArray(grouped_difference);
+
+                return (in_future) ? 'in ' + string : string + ' ago';
+
+            },
+            removeNullValues: function (array) {
+              
+                var i, clean_array = [];
+                
+                for (i = 0; i !== array.length; i++) {
+                    
+                    if (array[i] !== null) {
+                        clean_array.push(array[i]);
+                    }
+                    
+                }
+                
+                return clean_array;
+                
+            },
+            joinArray: function (array) {
+                
+                if (array.length === 1) {
+                    return array[0];
+                }
+                
+                return array.slice(0, -1).join(' ') + ' and ' + array[array.length - 1];
+                
             }
 
-            var pluralisation = (quantity > 1) ? 1 : 0;
-            return quantity + ' ' + called[pluralisation];
+        };
 
-        }
-
-        // TODO rework that uneven months etc are shown
-        seconds = [ // TODO rename seconds
-            356 * 24 * 60 * 60,
-            31 * 24 * 60 * 60,
-            7 * 24 * 60 * 60,
-            24 * 60 * 60,
-            60 * 60,
-            60,
-            1
-        ];
-        localstuff = [ // TODO rename localstuff
-            ['year', 'years'],
-            ['month', 'months'],
-            ['week', 'weeks'],
-            ['day', 'days'],
-            ['hour', 'hours'],
-            ['minute', 'minutes'],
-            ['second', 'seconds']
-        ];
-
-        timeArray = [];
-
-        for (i = 0; i !== seconds.length; i++) {
-
-            var tmp_count = Math.floor(difference / seconds[i]); // TODO rename tmp
-            var tmp_string = format(tmp_count, localstuff[i]);
-
-            if (tmp_string !== null) {
-
-                timeArray.push(tmp_string);
-
-            }
-
-            difference -= tmp_count * seconds[i];
-
-        }
-
-        // console.log(timeArray);
-
-        // Remove too high accuracy
-        timeArray.length = Math.min(timeArray.length, accuracy);
-
-        // Create a string of stuff
-        if (timeArray.length === 1) {
-            var time_string = timeArray[0];
-        } else {
-            var time_string = timeArray.slice(0, -1).join(' ') + ' and ' + timeArray[timeArray.length - 1];
-        }
-
-        return (ago > now) ? 'in ' + time_string : time_string + ' ago';
-
+        return timeAgo.execute(time_ago, accuracy, time_now);
 
     };
 
