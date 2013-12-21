@@ -4,7 +4,7 @@ A filter for angularjs, which displays timestamps or dateStrings in the format "
 
 # Demo
 
-
+[You can see a demo of it working here](https://rawgithub.com/queicherius/ng-timeago/master/index.html)
 
 # Usage
 
