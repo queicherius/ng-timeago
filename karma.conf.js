@@ -14,9 +14,9 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'vendor/*.js',
+      'scripts/vendor/*.js',
       'scripts/app.js',
-      'scripts/timeAgoFilter.js',
+      'scripts/filters/timeAgo.js',
       'tests/angular-mocks.js',
       'tests/**/*Spec.js'
     ],
