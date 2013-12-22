@@ -1,5 +1,5 @@
 describe("Unit-Tests: timeAgo filter", function () {
-    
+
     var timeAgoFilter,
         second = 1000,
         minute = 60 * second,
@@ -8,16 +8,16 @@ describe("Unit-Tests: timeAgo filter", function () {
         week = 7 * day,
         month = 31 * day,
         year = 365 * day;
-    
+
     // Mock application    
     beforeEach(angular.mock.module('app'));
-    
+
     // Inject filter to test
-    beforeEach(inject(function($filter) {
-        timeAgoFilter = $filter('timeAgo');       
+    beforeEach(inject(function ($filter) {
+        timeAgoFilter = $filter('timeAgo');
     }));
-    
-    it('should have a timeAgo filter', function(){
+
+    it('should have a timeAgo filter', function () {
 
         expect(timeAgoFilter).not.toEqual(null);
 
@@ -26,52 +26,52 @@ describe("Unit-Tests: timeAgo filter", function () {
     it('should return null if no time is set', function () {
 
         var timeAgo;
-        
+
         timeAgo = timeAgoFilter();
         expect(timeAgo).toEqual(null);
 
     });
-    
+
     it('should work with the current time if "now" is not set', function () {
 
         var timeAgo, timeAgoWithCurrentSeconds, timestamp = (new Date()).getTime();
-        
+
         timeAgo = timeAgoFilter(timestamp, 99);
         timeAgoWithCurrentSeconds = timeAgoFilter(timestamp, 99, timestamp);
         expect(timeAgo).toEqual(timeAgoWithCurrentSeconds);
 
     });
-    
-    
+
+
     it('should convert dateString into timestamp', function () {
 
         var timeAgo;
-        
+
         timeAgo = timeAgoFilter('December 19, 2010 18:20:00', 99, 'December 19, 2010 18:40:01');
         expect(timeAgo).toEqual('20 minutes and 1 second ago');
 
     });
-    
+
     it('should return null if the accuracy is not valid', function () {
 
         var timeAgo;
-        
+
         timeAgo = timeAgoFilter(0, -1);
         expect(timeAgo).toEqual(null);
-        
+
         timeAgo = timeAgoFilter(0, 0);
         expect(timeAgo).toEqual(null);
 
     });
-    
+
     it('should return null if the date is not valid', function () {
 
         var timeAgo,
             nonValidDateString = 'not-valid';
-        
+
         timeAgo = timeAgoFilter(nonValidDateString, 0);
         expect(timeAgo).toEqual(null);
-        
+
         timeAgo = timeAgoFilter(0, 0, nonValidDateString);
         expect(timeAgo).toEqual(null);
 
@@ -80,7 +80,7 @@ describe("Unit-Tests: timeAgo filter", function () {
     it('should return "just now" if the difference is less than half a second', function () {
 
         var timeAgo;
-        
+
         timeAgo = timeAgoFilter(0, 99, 0);
         expect(timeAgo).toEqual('just now');
 
@@ -92,7 +92,7 @@ describe("Unit-Tests: timeAgo filter", function () {
     it('should return "x second(s) ago" / "in x second(s) if the difference in the seconds', function () {
 
         var timeAgo;
-        
+
         timeAgo = timeAgoFilter(0, 99, second);
         expect(timeAgo).toEqual('1 second ago');
 
@@ -110,7 +110,7 @@ describe("Unit-Tests: timeAgo filter", function () {
     it('should return "x minute(s) ago" / "in x minute(s) if the difference in the minutes', function () {
 
         var timeAgo;
-        
+
         timeAgo = timeAgoFilter(0, 99, minute);
         expect(timeAgo).toEqual('1 minute ago');
 
@@ -128,7 +128,7 @@ describe("Unit-Tests: timeAgo filter", function () {
     it('should return "x hour(s) ago" / "in x hours(s) if the difference in the hours', function () {
 
         var timeAgo;
-        
+
         timeAgo = timeAgoFilter(0, 99, hour);
         expect(timeAgo).toEqual('1 hour ago');
 
@@ -146,7 +146,7 @@ describe("Unit-Tests: timeAgo filter", function () {
     it('should return "x day(s) ago" / "in x day(s) if the difference in the days', function () {
 
         var timeAgo;
-        
+
         timeAgo = timeAgoFilter(0, 99, day);
         expect(timeAgo).toEqual('1 day ago');
 
@@ -164,7 +164,7 @@ describe("Unit-Tests: timeAgo filter", function () {
     it('should return "x week(s) ago" / "in x week(s) if the difference in the weeks', function () {
 
         var timeAgo;
-        
+
         timeAgo = timeAgoFilter(0, 99, week);
         expect(timeAgo).toEqual('1 week ago');
 
@@ -182,7 +182,7 @@ describe("Unit-Tests: timeAgo filter", function () {
     it('should return "x month(s) ago" / "in x month(s) if the difference in the month', function () {
 
         var timeAgo;
-        
+
         timeAgo = timeAgoFilter(0, 99, month);
         expect(timeAgo).toEqual('1 month ago');
 
@@ -218,7 +218,7 @@ describe("Unit-Tests: timeAgo filter", function () {
     it('should work while switching years, months etc', function () {
 
         var timeAgo;
-        
+
         timeAgo = timeAgoFilter('December 31, 1994 23:59:59', 99, 'January 01, 1995 23:59:59');
         expect(timeAgo).toEqual('1 day ago');
 
@@ -230,7 +230,7 @@ describe("Unit-Tests: timeAgo filter", function () {
     it('should have correct grammar', function () {
 
         var timeAgo;
-        
+
         timeAgo = timeAgoFilter(0, 99, hour + 1 * minute + second);
         expect(timeAgo).toEqual('1 hour 1 minute and 1 second ago');
 
@@ -242,7 +242,7 @@ describe("Unit-Tests: timeAgo filter", function () {
     it('should have correct accuracy', function () {
 
         var timeAgo;
-        
+
         timeAgo = timeAgoFilter(0, 1, hour + 2 * minute + second);
         expect(timeAgo).toEqual('1 hour ago');
 
@@ -257,10 +257,10 @@ describe("Unit-Tests: timeAgo filter", function () {
     it('should have correct accuracy when the groups in between dont have values', function () {
 
         var timeAgo;
-        
+
         timeAgo = timeAgoFilter(0, 3, week + /* null days, null hours + */ 10 * second);
         expect(timeAgo).toEqual('1 week ago');
-        
+
         timeAgo = timeAgoFilter(0, 2, month + /* null weeks + */ 6 * day + 4 * hour + 10 * second);
         expect(timeAgo).toEqual('1 month ago');
 

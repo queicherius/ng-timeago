@@ -15,24 +15,24 @@ application.filter('timeAgo', function () {
                 if (time_ago === undefined || time_ago === null) {
                     return null;
                 }
-                
+
                 if (accuracy < 1) {
                     return null;
                 }
 
                 // Default values
                 time_ago = new Date(time_ago);
-                
+
                 if (accuracy === undefined || accuracy === null) {
                     accuracy = 1;
                 }
-                
+
                 if (time_now === undefined || time_now === null) {
                     time_now = new Date();
                 } else {
                     time_now = new Date(time_now);
                 }
-                
+
                 // Calculation
                 difference = this.calculateDifference(time_now, time_ago);
 
@@ -47,9 +47,9 @@ application.filter('timeAgo', function () {
 
             },
             calculateDifference: function (now, ago) {
-                
+
                 return Math.abs(Math.round((now - ago) / 1000));
-                
+
             },
             groupDifference: function (difference) {
 
@@ -108,7 +108,7 @@ application.filter('timeAgo', function () {
             toString: function (grouped_difference, in_future) {
 
                 var string;
-                
+
                 grouped_difference = this.removeNullValues(grouped_difference);
                 string = this.joinArray(grouped_difference);
 
@@ -116,28 +116,28 @@ application.filter('timeAgo', function () {
 
             },
             removeNullValues: function (array) {
-              
+
                 var i, clean_array = [];
-                
+
                 for (i = 0; i !== array.length; i++) {
-                    
+
                     if (array[i] !== null) {
                         clean_array.push(array[i]);
                     }
-                    
+
                 }
-                
+
                 return clean_array;
-                
+
             },
             joinArray: function (array) {
-                
+
                 if (array.length === 1) {
                     return array[0];
                 }
-                
+
                 return array.slice(0, -1).join(' ') + ' and ' + array[array.length - 1];
-                
+
             }
 
         };
