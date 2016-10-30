@@ -1,6 +1,8 @@
 # ng-timeago
 
-A filter for angularjs, which displays timestamps or dateStrings in the format "... years ... months etc ago" or  "in ... years ... months etc"
+[![No Maintenance Intended](https://img.shields.io/badge/No%20Maintenance%20Intended-%E2%9C%95-red.svg?style=flat-square)](http://unmaintained.tech/)
+
+> A filter for angularjs, which displays timestamps or dateStrings in the format "... years ... months etc ago" or  "in ... years ... months etc"
 
 # Demo
 
